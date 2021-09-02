@@ -16,5 +16,17 @@ namespace SportStore.Web.Models
         }
 
         public IQueryable<Product> GetProducts => context.Products;
+        public void SaveProduct(Product product)
+        {
+            if (product.ProductId == 0)
+            {
+                context.Products.Add(product);
+            }
+            else
+            {
+                context.Entry<Product>(product).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            }
+            context.SaveChanges();
+        }
     }
 }

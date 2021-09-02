@@ -15,7 +15,29 @@ namespace SportStore.Web.Controllers
         {
             repo = repository;
         }
-
+        [HttpGet]
         public ViewResult Index() => View(repo.GetProducts);
+
+        [HttpGet]
+        public ActionResult Edit(int productId)
+        {
+            return View(repo.GetProducts.FirstOrDefault(p => p.ProductId == productId));
+        }
+        [HttpPost]
+        public ActionResult Edit(Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                repo.SaveProduct(product);
+                TempData["Message"] = $"Product: {product.Name} has been saved.";
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                ModelState.AddModelError("", "Oops, something went wrong");
+                return View(product);
+            }
+        }
+
     }
 }

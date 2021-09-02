@@ -15,5 +15,10 @@ namespace SportStore.Web.Models
             new Product{Name = "Product4",Price=20},
 
         }.AsQueryable();
+
+        public void SaveProduct(Product product)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

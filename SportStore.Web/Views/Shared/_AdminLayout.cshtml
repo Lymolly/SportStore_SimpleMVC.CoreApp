@@ -12,7 +12,11 @@
     <title>@ViewBag.Title</title>
 </head>
 <body class="m-1 p-1">
-    <div class="bg-info p-2"><h4>@ViewBag.Title</h4></div>
+<div class="bg-info p-2"><h4>@ViewBag.Title</h4></div>
+@if (TempData["Message"] != null)
+ {
+    <div class="alert alert-success">@TempData["Message"]</div>
+ }
     @RenderBody()
 </body>
 </html>
