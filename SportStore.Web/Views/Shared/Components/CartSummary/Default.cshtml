@@ -1,0 +1,19 @@
+﻿
+@model SportStore.Web.Models.Cart 
+@*@{
+    Layout = "_Layout";
+}*@
+<div>
+    @if (Model.Lines.Any())
+    {
+        <small class="navbar-text">
+            <b>Your cart: </b>
+            @Model.Lines.Sum(l => l.Quantity)
+            @Model.ComputeTotalSum().ToString("c")
+        </small>
+        <a class="btn btn-sm btn-secondary navbar-btn"
+           asp-controller="Cart" asp-action="Index" asp-route-returnurl="@ViewContext.HttpContext.Request.PathAndQuery()">
+            <i class="fa fa-shopping-cart"></i>
+        </a>
+    }
+</div>

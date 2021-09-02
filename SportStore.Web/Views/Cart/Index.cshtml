@@ -1,0 +1,50 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_Layout";
+}
+@using System.Globalization
+@model CartIndexViewModel
+<h2>Your product cart</h2>
+<h3>@ViewBag.Session</h3>
+<table class="table table-striped table-hover">
+    <thead>
+    <tr>
+        <th>Quantity</th>
+        <th>Item</th>
+        <th class="text-right">Price</th>
+        <th class="text-right">Subtotal</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var line in Model.Cart.Lines)
+    {
+        <tr>
+            <td class="text-center">@line.Quantity</td>
+            <td class="text-left">@line.Product.Name</td>
+            <td class="text-right">@line.Product.Price</td>
+            <td class="text-right">@((line.Quantity * line.Product.Price).ToString("C3",CultureInfo.CurrentCulture))</td>
+            <td>
+                <form asp-action="RemoveFromCart" method="post">
+                    <input type="hidden" name="productId" value="@line.Product.ProductId"/>
+                    <input type="hidden" name="returnUrl" value="@Model.ReturnUrl"/>
+                    <button type="submit" class="btn btn-danger">Remove</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="3" class="text-right">Total:</td>
+        <td class="text-right">
+            @Model.Cart.ComputeTotalSum().ToString("C3", CultureInfo.CurrentCulture)
+        </td>
+    </tr>
+    </tfoot>
+</table>
+<div class="text-center">
+    <a class="btn btn-info" href="@Model.ReturnUrl">Continue shopping</a>
+    <a class="btn btn-danger" asp-action="Checkout" asp-controller="Order">Checkout</a>
+</div>
