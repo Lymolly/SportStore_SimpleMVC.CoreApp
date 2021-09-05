@@ -109,6 +109,49 @@ namespace SportStore.Tests
             mock.Verify(m => m.SaveProduct(It.IsAny<Product>()),Times.Never);
             Assert.IsType<ViewResult>(result);
         }
+        [Fact]
+        public void Delete_CannotDelete_GetInvalidId()
+        {
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            var product = new Product{ ProductId = 0, Name = "Test product0" };
+            mock.Setup(m => m.GetProducts).Returns(new Product[]
+            {
+                product,
+                new Product() {ProductId = 3, Name = "Test product3" },
+                new Product() {ProductId = 2, Name = "Test product2" },
+            }.AsQueryable());
+
+            
+            AdminController target = new AdminController(mock.Object);
+            target.Delete(product.ProductId);
+            var result = mock.Object.GetProducts.ToArray();
+
+            mock.Verify(m => m.DeleteProduct(It.IsAny<int>()), Times.Never);
+            Assert.Equal(3, result.Length);
+        }
+        [Fact]
+        public void Delete_DeleteSucceded()
+        {
+            var product = new Product { ProductId = 1, Name = "Test product1" };
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            Mock<ITempDataDictionary> tempData = new Mock<ITempDataDictionary>();
+            mock.Setup(m => m.GetProducts).Returns(new Product[]
+            {
+                product,
+                new Product() {ProductId = 2, Name = "Test product2" },
+                new Product() {ProductId = 3, Name = "Test product3" },
+            }.AsQueryable());
+            mock.Setup(m => m.DeleteProduct(product.ProductId)).Returns("Test product1");
+
+            AdminController target = new AdminController(mock.Object)
+            {
+                TempData = tempData.Object
+            };
+            target.Delete(product.ProductId);
+
+            mock.Verify(m => m.DeleteProduct(product.ProductId));
+            Assert.Equal("Test product1", mock.Object.DeleteProduct(1));
+        }
 
         private T GetViewModel<T>(IActionResult actionResult) where T : class
         {

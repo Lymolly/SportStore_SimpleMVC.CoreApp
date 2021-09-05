@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using SportStore.Web.Models;
 
 namespace SportStore.Web.Controllers
@@ -40,11 +41,13 @@ namespace SportStore.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult MarkNotShipped()
         { 
             return View(repo.Orders.Where(o => !o.Shipped));
         }
         [HttpPost]
+        [Authorize]
         public IActionResult MarkShipped(int orderId)
         {
             Order order = repo.Orders.FirstOrDefault(o => o.OrderId == orderId);

@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using SportStore.Web.Models;
 
 namespace SportStore.Web.Controllers
 {
+    [Authorize]
     public class AdminController : Controller
     {
         IProductRepository repo;
@@ -38,6 +40,24 @@ namespace SportStore.Web.Controllers
                 return View(product);
             }
         }
+
+        [HttpGet]
+        public IActionResult Create() => View("Edit", new Product());
+
+        [HttpPost]
+        public IActionResult Delete(int productId)
+        {
+            if (productId != 0)
+            {
+                string deletedProductName = repo.DeleteProduct(productId);
+                if (deletedProductName != null)
+                {
+                    TempData["Message"] = $"{deletedProductName} has been deleted!";
+                }
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
 
     }
 }

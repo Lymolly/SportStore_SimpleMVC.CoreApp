@@ -28,5 +28,16 @@ namespace SportStore.Web.Models
             }
             context.SaveChanges();
         }
+
+        public string DeleteProduct(int productId)
+        {
+            Product product = context.Products.Find(productId);
+            if (product is not null)
+            {
+                context.Products.Remove(product);
+                context.SaveChanges();
+            }
+            return product.Name;
+        }
     }
 }

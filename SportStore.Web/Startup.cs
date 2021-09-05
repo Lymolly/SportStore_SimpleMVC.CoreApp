@@ -9,11 +9,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using SportStore.Web.Context;
 using SportStore.Web.Models;
 using Microsoft.EntityFrameworkCore;
+using SportStore.Web.Models.Identity;
 using SportStore.Web.Repositories;
 
 namespace SportStore.Web
@@ -35,6 +37,11 @@ namespace SportStore.Web
             //services.AddRazorPages();
             services.AddDbContext<SportStoreContext>(opt =>
                 opt.UseSqlServer(Configuration.GetConnectionString("SportStoreProducts")));
+            services.AddDbContext<AppIdentityDbContext>(opt =>
+                opt.UseSqlServer(Configuration.GetConnectionString("SportStoreIdentity")));
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppIdentityDbContext>()
+                .AddDefaultTokenProviders();
             services.AddTransient<IProductRepository, EFProductRepository>();
             services.AddTransient<IOrderRepository, EFOrderRepository>();
             //services.AddTransient<IProductRepository, FakeRepository>();
@@ -48,9 +55,11 @@ namespace SportStore.Web
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseDeveloperExceptionPage();
+            app.UseExceptionHandler("/Error");
             app.UseStatusCodePages();
             app.UseStaticFiles();
             app.UseSession();
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -79,6 +88,7 @@ namespace SportStore.Web
             //    endpoints.MapControllerRoute("default", "{controller=Product}/{action=Products}");
             //});
             SeedData.EnsurePopulated(app);
+            IdentitySeedData.EnsureAdmin(app);
         }
     }
 }

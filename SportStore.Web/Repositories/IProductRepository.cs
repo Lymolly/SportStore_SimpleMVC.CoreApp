@@ -6,5 +6,6 @@ namespace SportStore.Web.Models
     {
         IQueryable<Product> GetProducts { get;}
         void SaveProduct(Product product);
+        string DeleteProduct(int productId);
     }
 }
